@@ -43,7 +43,9 @@ module ExtendedWatchersIssuePatch
           visible = visible_without_extwatch?(usr)
           return true if visible
 
-          if (usr || User.current).logged?
+          is_recipient = (usr || User.current).roles_for_project(self.project).any? { |role| role.name == 'Recipient' }
+
+          if (usr || User.current).logged? && is_recipient
             visible =  self.watched_by?(usr)
           end
 
