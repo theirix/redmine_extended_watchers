@@ -15,7 +15,7 @@ module ExtendedWatchersControllerPatch
 
         def autocomplete_for_user_with_extwatch
           @users = User.active.sorted.like(params[:q]).limit(100).all
-          @users.reject! {|user| !user.allowed_to?(:view_issues, @project)}
+          @users = @users.reject {|user| !user.allowed_to?(:view_issues, @project)}
           if @watched
             @users -= @watched.watcher_users
           end
