@@ -5,7 +5,12 @@ Rails.logger.info 'Starting Extended Watchers plugin for Redmine'
 require_dependency 'extended_watchers_issue_patch'
 require_dependency 'extended_watchers_controller_patch'
 
-Rails.configuration.to_prepare do
+if Rails::VERSION::MAJOR >= 5 and Rails::VERSION::MINOR >= 1
+  reloader = ActiveSupport::Reloader
+else
+  reloader = ActionDispatch::Callbacks
+end
+reloader.to_prepare do
   unless Issue.included_modules.include?(ExtendedWatchersIssuePatch)
       Issue.send(:include, ExtendedWatchersIssuePatch)
   end
