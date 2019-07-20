@@ -7,7 +7,7 @@ module ExtendedWatchersIssuePatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :visible?, :extwatch
+            alias_method :original_visible?, :visible?
         end
 
         base.instance_eval do
@@ -41,7 +41,7 @@ module ExtendedWatchersIssuePatch
     end
 
     module InstanceMethods
-        def visible_with_extwatch?(usr=nil)
+        def visible?(usr=nil)
           (usr || User.current).allowed_to?(:view_issues, self.project) do |role, user|
             if user.logged?
               case role.issues_visibility
@@ -52,10 +52,10 @@ module ExtendedWatchersIssuePatch
               when 'own'
                 self.author == user || self.watched_by?(user) || user.is_or_belongs_to?(assigned_to)
               else
-                visible_without_extwatch?(usr)
+                original_visible?(usr)
               end
             else
-              visible_without_extwatch?(usr)
+              original_visible?(usr)
             end
           end
         end
