@@ -8,6 +8,7 @@ module ExtendedWatchersIssuePatch
             unloadable
 
             alias_method :original_visible?, :visible?
+            alias_method :visible?, :patched_visible?
         end
 
         base.instance_eval do
@@ -41,7 +42,7 @@ module ExtendedWatchersIssuePatch
     end
 
     module InstanceMethods
-        def visible?(usr=nil)
+        def patched_visible?(usr=nil)
           (usr || User.current).allowed_to?(:view_issues, self.project) do |role, user|
             if user.logged?
               case role.issues_visibility

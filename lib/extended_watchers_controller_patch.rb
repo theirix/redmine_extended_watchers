@@ -8,12 +8,13 @@ module ExtendedWatchersControllerPatch
             unloadable
 
             alias_method :original_autocomplete_for_user, :autocomplete_for_user
+            alias_method :autocomplete_for_user, :patched_autocomplete_for_user
         end
     end
 
     module InstanceMethods
 
-        def autocomplete_for_user
+        def patched_autocomplete_for_user
           @users = User.active.sorted.like(params[:q]).limit(100).all
           @users = @users.reject {|user| !user.allowed_to?(:view_issues, @project)}
           if @watched
